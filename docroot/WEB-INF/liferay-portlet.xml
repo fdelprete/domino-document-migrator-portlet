@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE liferay-portlet-app PUBLIC "-//Liferay//DTD Portlet Application 6.2.0//EN" "http://www.liferay.com/dtd/liferay-portlet-app_6_2_0.dtd">
+
+<liferay-portlet-app>
+	<portlet>
+		<portlet-name>domino-document-migrator</portlet-name>
+		<icon>/icon.png</icon>
+		<configuration-action-class>com.fmdp.domino_migrator.portlet.ConfigurationActionImpl</configuration-action-class>
+		<control-panel-entry-category>content</control-panel-entry-category>
+		<control-panel-entry-weight>100</control-panel-entry-weight>
+		<preferences-unique-per-layout>false</preferences-unique-per-layout>
+		<instanceable>false</instanceable>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<footer-portlet-javascript>/js/main.js</footer-portlet-javascript>
+		<css-class-wrapper>domino-document-migrator-portlet</css-class-wrapper>
+		<add-default-resource>true</add-default-resource>
+		<system>true</system>
+	</portlet>
+	<role-mapper>
+		<role-name>administrator</role-name>
+		<role-link>Administrator</role-link>
+	</role-mapper>
+</liferay-portlet-app>

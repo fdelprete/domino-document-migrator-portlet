@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<beans
+    default-destroy-method="destroy"
+    default-init-method="afterPropertiesSet"
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/aop
+     http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+     http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    <!-- Listeners -->
+    <bean id="fmdp.bulk.notesattachment_listener" class="com.fmdp.bulk.domino.BulkNotesAttachmentListenerImpl" />
+    <!-- Destinations -->
+    <bean id="fmdp.bulk.notesattachment.destination" class="com.liferay.portal.kernel.messaging.SerialDestination">
+        <property name="name" value="fmdp/bulk/notesattachment/destination" />
+    </bean>
+    <!-- Configurator -->
+    <bean id="messagingConfigurator" class="com.liferay.portal.kernel.messaging.config.PluginMessagingConfigurator">
+        <property name="messageListeners">
+            <map key-type="java.lang.String" value-type="java.util.List">
+                <entry key="fmdp/bulk/notesattachment/destination">
+                    <list value-type="com.liferay.portal.kernel.messaging.MessageListener">
+                        <ref bean="fmdp.bulk.notesattachment_listener" />
+                    </list>
+                </entry>
+            </map>
+        </property>
+        <property name="destinations">
+            <list>
+                <ref bean="fmdp.bulk.notesattachment.destination"/>
+            </list>
+        </property>
+    </bean>
+</beans>
