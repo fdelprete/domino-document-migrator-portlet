@@ -13,3 +13,11 @@ Then you can choose a Notes view selecting all the Notes document cotaining the 
 The attachments will be imported in a folder (you can choose it) af the Documents And Media Library.
 
 If in your Notes document you have a field storing tags you can also import the Notes tags into Liferay document tags.
+
+The import process (could be time consuming) is started as liferay BackgroundTask.
+
+TO DO
+- Managing BackgroundTastStatus
+- Remove or decide to move server connection parameters in the configuration page.
+- Mapping of Notes document category to liferay asset category.
+- Mapping of Roles in Notes readers and authors field to liferay site roles.
