@@ -3,7 +3,7 @@ domino-document-migrator-portlet
 
 A control panel Liferay portlet to import Notes document attachments from a remote Notes database.
 
-This portlet use NCSO.jar. You caon obtian the library from the data/domino/html/java directory in you server Domino.
+This portlet use NCSO.jar. You caon obtian the library from the /domino/java directory in your server Domino data folder.
 
 You can choose a Notes database from a remote Domino server. 
 (You connect to the remote Domino server using DIIOP so that task must be running on the Domino server)
