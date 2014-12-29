@@ -14,7 +14,7 @@ The attachments will be imported in a folder (you can choose it) af the Document
 
 If in your Notes document you have a field storing tags you can also import the Notes tags into Liferay document tags.
 
-The import process (could be time consuming) is started as liferay BackgroundTask.
+The import process (could be time consuming) is started as liferay BackgroundTask based on the robust Liferay ESB.
 
 TO DO
 - Managing BackgroundTastStatus
