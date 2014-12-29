@@ -19,14 +19,14 @@
 <div class="alert alert-info">		
 
 <%
-			String dominoHostName = ParamUtil.getString(request, "dominoHostName");
-		String dominoUserName = ParamUtil.getString(request, "dominoUserName");
-		String dominoUserPassword = ParamUtil.getString(request, "dominoUserPassword");
+String dominoHostName = ParamUtil.getString(request, "dominoHostName");
+String dominoUserName = ParamUtil.getString(request, "dominoUserName");
+String dominoUserPassword = ParamUtil.getString(request, "dominoUserPassword");
 
-		if (Validator.isNull(ParamUtil.getString(request, "dominoDatabaseName")) ||
-				Validator.isNull(ParamUtil.getString(request, "dominoViewName")) ||
-				Validator.isNull(ParamUtil.getString(request, "dominoFieldName"))) {
-		%>
+if (Validator.isNull(ParamUtil.getString(request, "dominoDatabaseName")) ||
+		Validator.isNull(ParamUtil.getString(request, "dominoViewName")) ||
+		Validator.isNull(ParamUtil.getString(request, "dominoFieldName"))) {
+%>
 	<liferay-ui:message key="please-define-each-of-the-domino-properties-database-name,-view-name-and-field-name" />
 
 <%

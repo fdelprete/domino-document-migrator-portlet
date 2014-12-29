@@ -17,7 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-	String dominoHostName = ParamUtil.getString(request, "dominoHostName");
+String dominoHostName = ParamUtil.getString(request, "dominoHostName");
 String dominoUserName = ParamUtil.getString(request, "dominoUserName");
 String dominoUserPassword = ParamUtil.getString(request, "dominoUserPassword");
 
