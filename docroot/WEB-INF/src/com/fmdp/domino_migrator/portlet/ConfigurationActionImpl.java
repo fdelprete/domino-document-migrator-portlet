@@ -52,6 +52,7 @@ public class ConfigurationActionImpl implements ConfigurationAction {
         String commonUserName = s.getCommonUserName();
         System.out.println("commonUserName " + commonUserName);
 		} catch (NotesException e2) {
+			_log.error(e2.getLocalizedMessage());
 			e2.printStackTrace ();
 		}
 	        String portletResource = ParamUtil.getString(actionRequest,"portletResource");
