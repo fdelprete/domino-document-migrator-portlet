@@ -70,7 +70,7 @@
 			<aui:input name="<%=Constants.CMD%>" type="hidden"
 				value="<%=Constants.UPDATE%>" />
 			<liferay-ui:success key="success"
-				message="the-domino-configration-was-saved-and-seems-to-be-valid" />
+				message="the-domino-configuration-was-saved-and-seems-to-be-valid" />
 
 			<liferay-ui:error key="noDominoSessionAvalaible"
 				message="no-domino-session-avaliable" />

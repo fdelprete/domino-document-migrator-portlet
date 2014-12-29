@@ -10,12 +10,20 @@ public class NotesAttachmentBackgroundTaskStatusMessageTranslator implements Bac
         BackgroundTaskStatus backgroundTaskStatus, Message message) {
 
     	backgroundTaskStatus.setAttribute(
-    			"attachmentsImported",
-    			message.getLong("attachmentsImported"));
+    			"documentsImported",
+    			message.getLong("documentsImported"));
 
     	backgroundTaskStatus.setAttribute(
-    			"attachmentsWithProblem",
-    			message.getLong("attachmentsWithProblem"));
-
+    			"documentsWithProblem",
+    			message.getLong("documentsWithProblem"));
+    	
+    	backgroundTaskStatus.setAttribute(
+    			"totalDocuments",
+    			message.getLong("totalDocuments"));
+    	
+    	backgroundTaskStatus.setAttribute(
+    			"totalAttachments",
+    			message.getLong("totalAttachments"));
+    	
      }
 }

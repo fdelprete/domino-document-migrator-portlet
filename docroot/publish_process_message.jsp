@@ -10,3 +10,39 @@ BackgroundTask backgroundTask = (BackgroundTask)row.getObject();
 	<liferay-ui:message key="<%= backgroundTask.getStatusLabel() %>" />
 </strong>
 
+<c:if test="<%= backgroundTask.isInProgress() %>">
+
+	<%
+	BackgroundTaskStatus backgroundTaskStatus = BackgroundTaskStatusRegistryUtil.getBackgroundTaskStatus(backgroundTask.getBackgroundTaskId());
+	%>
+
+	<c:if test="<%= backgroundTaskStatus != null %>">
+
+		<%
+		double percentage = 100;
+
+		long documentsImported = GetterUtil.getLong(backgroundTaskStatus.getAttribute("documentsImported"));
+		long documentsWithProblem = GetterUtil.getLong(backgroundTaskStatus.getAttribute("documentsWithProblem"));
+		long documentParsed = documentsImported + documentsWithProblem;
+		long totalDocuments = GetterUtil.getLong(backgroundTaskStatus.getAttribute("totalDocuments"));
+
+		if (totalDocuments > 0) {
+			percentage = Math.round((double)documentParsed / totalDocuments * 100);
+		}
+		%>
+
+		<div class="progress progress-striped active">
+			<div class="bar" style="width: <%= percentage %>%;">
+				<c:if test="<%= totalDocuments > 0 %>">
+					<%= documentParsed %> / <%= totalDocuments %>
+				</c:if>
+			</div>
+		</div>
+
+		<div class="progress-current-item">
+			<strong><liferay-ui:message key="importing" /><%= StringPool.TRIPLE_PERIOD %></strong> 
+		</div>
+
+	</c:if>
+</c:if>
+
