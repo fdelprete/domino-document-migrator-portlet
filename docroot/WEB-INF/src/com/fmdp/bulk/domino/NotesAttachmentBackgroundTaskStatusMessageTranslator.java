@@ -9,8 +9,13 @@ public class NotesAttachmentBackgroundTaskStatusMessageTranslator implements Bac
     @Override public void translate(
         BackgroundTaskStatus backgroundTaskStatus, Message message) {
 
-        backgroundTaskStatus.setAttribute(
-            "xy", message.getString("xy") + "-pippo");
+    	backgroundTaskStatus.setAttribute(
+    			"attachmentsImported",
+    			message.getLong("attachmentsImported"));
+
+    	backgroundTaskStatus.setAttribute(
+    			"attachmentsWithProblem",
+    			message.getLong("attachmentsWithProblem"));
 
      }
 }

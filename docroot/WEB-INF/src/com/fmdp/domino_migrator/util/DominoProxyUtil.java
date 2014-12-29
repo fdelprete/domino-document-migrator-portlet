@@ -14,7 +14,7 @@ import lotus.domino.NotesFactory;
  * @author Filippo Maria Del Prete, FDP Sas
  * @version 1.0.0, 28/12/2014
  */
-public class DominoProxy {
+public class DominoProxyUtil {
 
 	public lotus.domino.Session dominoSession;
 		
@@ -100,20 +100,20 @@ public class DominoProxy {
 
 		
 	/** Singleton instance. */
-	private static DominoProxy INSTANCE = new DominoProxy();
+	private static DominoProxyUtil INSTANCE = new DominoProxyUtil();
 
 	  
-	private DominoProxy() {
+	private DominoProxyUtil() {
 		init();
 	}
 
-	public static DominoProxy getInstance() {
+	public static DominoProxyUtil getInstance() {
 		return INSTANCE;
 	}
 
 	private void init() {
 	}
 	
-	private static final Log _log = LogFactoryUtil.getLog(DominoProxy.class);
+	private static final Log _log = LogFactoryUtil.getLog(DominoProxyUtil.class);
 
 }

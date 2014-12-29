@@ -17,13 +17,12 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String dominoHostName = ParamUtil.getString(request, "dominoHostName");
+	String dominoHostName = ParamUtil.getString(request, "dominoHostName");
 String dominoUserName = ParamUtil.getString(request, "dominoUserName");
 String dominoUserPassword = ParamUtil.getString(request, "dominoUserPassword");
 
-DominoProxy dominoProxy = DominoProxy.getInstance();
+DominoProxyUtil dominoProxy = DominoProxyUtil.getInstance();
 dominoProxy.openDominoSession(dominoHostName, dominoUserName, dominoUserPassword);
-
 %>
 
 <div class="alert alert-info">		

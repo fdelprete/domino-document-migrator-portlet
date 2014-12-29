@@ -20,7 +20,7 @@ import lotus.domino.View;
 import lotus.domino.ACL;
 
 import com.fmdp.bulk.domino.NotesAttachmentTaskExecutor;
-import com.fmdp.domino_migrator.util.DominoProxy;
+import com.fmdp.domino_migrator.util.DominoProxyUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -153,7 +153,7 @@ public class DominoDocMigPortlet extends MVCPortlet {
 		}
 
 		if (SessionErrors.isEmpty(actionRequest)) {
-			DominoProxy dominoProxy = DominoProxy.getInstance();
+			DominoProxyUtil dominoProxy = DominoProxyUtil.getInstance();
 			dominoProxy.openDominoSession(dominoHostName, dominoUserName, dominoUserPassword);
 			if (!dominoProxy.isDominoSessionAvailable()) {
 				SessionErrors.add(actionRequest, "noDominoSessionAvalaible");
