@@ -34,7 +34,6 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 
 		Map<String, Serializable> taskContextMap = backgroundTask.getTaskContextMap();
 
-
 		String dominoHostName = MapUtil.getString(taskContextMap, "dominoHostName");
 		String dominoUserName = MapUtil.getString(taskContextMap, "dominoUserName");
 		String dominoUserPassword = MapUtil.getString(taskContextMap, "dominoUserPassword");
@@ -54,13 +53,10 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 					BackgroundTaskConstants.STATUS_FAILED);
 			backgroundTaskResult.setStatusMessage("please-define-each-of-the-domino-properties-database-name,-view-name-and-form-name");
 			return backgroundTaskResult;
-
-			//    	<liferay-ui:message key="please-define-each-of-the-domino-properties-database-name,-view-name-and-form-name" />
-			//    	return;
 		}
+
 		DominoProxyUtil dominoProxy = DominoProxyUtil.getInstance();
 		dominoProxy.openDominoSession(dominoHostName, dominoUserName, dominoUserPassword);
-
 
 		if (!dominoProxy.isDominoSessionAvailable()) {
 			BackgroundTaskResult backgroundTaskResult = new BackgroundTaskResult(
@@ -103,9 +99,7 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 		
 		int totDocs = vec.getCount();
 		
-//		long totDocs = NotesDocumentUtil.DBColumn("", "NoCache", server, 
-//				dominoDatabaseName, dominoViewName, 1, dominoProxy.dominoSession);
-		System.out.print("totDocs " + totDocs + StringPool.NEW_LINE);
+//		System.out.print("totDocs " + totDocs + StringPool.NEW_LINE);
 		notesImportBean.setTotalDocuments(totDocs);
 		
 		int numAttachments = 0;
