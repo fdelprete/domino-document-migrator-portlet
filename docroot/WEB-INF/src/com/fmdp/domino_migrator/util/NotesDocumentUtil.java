@@ -83,7 +83,9 @@ public class NotesDocumentUtil {
 				+ quotes + ";" + quotes + strServer + quotes + ":" 
 				+ quotes + strDatabase + quotes + ";" + quotes 
 				+ strView + quotes + ";" + numCol + "));1)";
+		System.out.print("strFormula " + strFormula + StringPool.NEW_LINE);
 		Vector<?> v = s.evaluate(strFormula);
+		System.out.print("v.firstElement().toString() " + v.firstElement().toString() + StringPool.NEW_LINE);
 		long t = Long.valueOf(v.firstElement().toString());
 		return t;
 		

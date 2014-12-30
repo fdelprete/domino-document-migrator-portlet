@@ -4,6 +4,7 @@ import lotus.domino.*;
 
 import java.io.Serializable;
 import java.util.Map;
+
 import com.fmdp.domino_migrator.portlet.model.NotesImportBean;
 import com.fmdp.domino_migrator.util.DominoProxyUtil;
 import com.fmdp.domino_migrator.util.NotesDocumentUtil;
@@ -97,19 +98,27 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 		notesImportBean.setDocumentsWithProblem(0);
 		notesImportBean.setTotalDocuments(0);
 		notesImportBean.setTotalAttachments(0);
+
+		ViewEntryCollection vec = view.getAllEntries();
 		
-		long totDocs = NotesDocumentUtil.DBColumn("", "NoCache", db.getServer(), 
-				db.getFileName(), dominoViewName, 1, dominoProxy.dominoSession);
+		int totDocs = vec.getCount();
 		
+//		long totDocs = NotesDocumentUtil.DBColumn("", "NoCache", server, 
+//				dominoDatabaseName, dominoViewName, 1, dominoProxy.dominoSession);
+		System.out.print("totDocs " + totDocs + StringPool.NEW_LINE);
 		notesImportBean.setTotalDocuments(totDocs);
 		
-		long numAttachments = 0;
+		int numAttachments = 0;
 		
 		while (doc != null) {
+			
 			notesDocProcessed++;
+			System.out.print("notesDocProcessed " + notesDocProcessed + StringPool.NEW_LINE);
+			
 			notesImportBean.setDocumentsImported(notesDocProcessed);
 			NotesImportDataHandlerStatusMessageSenderUtil.sendStatusMessage(notesImportBean);
-
+			System.out.print("notesImportBean " + notesImportBean.toString() + StringPool.NEW_LINE);
+			
 			numAttachments += NotesDocumentUtil.ExtractAndSaveAttachment(userId, groupId, newFolderId, 
 					doc, dominoFieldName, 
 					extractTags, dominoFieldNameWithTags);

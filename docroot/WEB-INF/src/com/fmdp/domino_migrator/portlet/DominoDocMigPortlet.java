@@ -7,10 +7,14 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.portlet.ActionRequest;
+import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
 
 
 import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequestDispatcher;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +24,7 @@ import lotus.domino.ACL;
 
 import com.fmdp.bulk.domino.NotesAttachmentTaskExecutor;
 import com.fmdp.domino_migrator.util.DominoProxyUtil;
+import com.liferay.portal.NoSuchBackgroundTaskException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -34,6 +39,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.BackgroundTask;
+import com.liferay.portal.security.auth.PrincipalException;
 import com.liferay.portal.service.BackgroundTaskLocalServiceUtil;
 import com.liferay.portal.service.ServiceContext;
 import com.liferay.portal.service.ServiceContextFactory;
@@ -107,7 +113,36 @@ public class DominoDocMigPortlet extends MVCPortlet {
 				SessionMessages.add(actionRequest, "success");
 			}
 	}
-	
+
+	public void deleteBackgroundTask(javax.portlet.ActionRequest actionRequest,
+			javax.portlet.ActionResponse actionResponse)
+			throws Exception {
+
+		
+		
+			long backgroundTaskId = ParamUtil.getLong(
+				actionRequest, "backgroundTaskId");
+			
+			_log.debug("backgroundTaskId " + backgroundTaskId);
+			System.out.print("OK" + StringPool.NEW_LINE);
+			try {
+			BackgroundTaskLocalServiceUtil.deleteBackgroundTask(backgroundTaskId);
+			sendRedirect(actionRequest, actionResponse);
+			}
+			catch (Exception e) {
+				if (e instanceof NoSuchBackgroundTaskException) {
+
+					SessionErrors.add(actionRequest, "entryNotFound");
+				}
+				else if (e instanceof PrincipalException) {
+					
+					SessionErrors.add(actionRequest, "noPermissions");
+				
+				} else {
+					throw e;
+				}
+			}
+		}
 	protected void validateDominoParameters(ActionRequest actionRequest) 
 			throws Exception {
 
@@ -260,5 +295,16 @@ public class DominoDocMigPortlet extends MVCPortlet {
 	        SessionMessages.add(actionRequest, "success");
 
 	}
+	@Override
+	public void serveResource(
+		ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws PortletException, IOException {
 
+		PortletContext portletContext = getPortletContext();
+		
+		PortletRequestDispatcher portletRequestDispatcher = null;
+		portletRequestDispatcher = portletContext.getRequestDispatcher(
+				"/import_domino_processes.jsp");
+		portletRequestDispatcher.include(resourceRequest, resourceResponse);
+	}
+	
 }

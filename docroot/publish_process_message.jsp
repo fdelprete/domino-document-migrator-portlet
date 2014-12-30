@@ -21,10 +21,10 @@ BackgroundTask backgroundTask = (BackgroundTask)row.getObject();
 		<%
 		double percentage = 100;
 
-		long documentsImported = GetterUtil.getLong(backgroundTaskStatus.getAttribute("documentsImported"));
-		long documentsWithProblem = GetterUtil.getLong(backgroundTaskStatus.getAttribute("documentsWithProblem"));
-		long documentParsed = documentsImported + documentsWithProblem;
-		long totalDocuments = GetterUtil.getLong(backgroundTaskStatus.getAttribute("totalDocuments"));
+		int documentsImported = GetterUtil.getInteger(backgroundTaskStatus.getAttribute("documentsImported"));
+		int documentsWithProblem = GetterUtil.getInteger(backgroundTaskStatus.getAttribute("documentsWithProblem"));
+		int documentParsed = documentsImported + documentsWithProblem;
+		int totalDocuments = GetterUtil.getInteger(backgroundTaskStatus.getAttribute("totalDocuments"));
 
 		if (totalDocuments > 0) {
 			percentage = Math.round((double)documentParsed / totalDocuments * 100);

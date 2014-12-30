@@ -5,7 +5,8 @@ long groupId = ParamUtil.getLong(request, "groupId", themeDisplay.getScopeGroupI
 
 PortletURL portletURL = currentURLObj;
 
-portletURL.setParameter("tabs3", "current-and-previous");
+portletURL.setParameter("tabs2", "current-and-previous");
+//portletURL.setParameter("groupId", String.valueOf(groupId));
 
 String orderByCol = ParamUtil.getString(request, "orderByCol");
 String orderByType = ParamUtil.getString(request, "orderByType");
@@ -21,7 +22,11 @@ else {
 
 OrderByComparator orderByComparator = BackgroundTaskComparatorFactoryUtil.getBackgroundTaskOrderByComparator(orderByCol, orderByType);
 %>
-<h3>Test</h3>
+<liferay-ui:error key="entryNotFound"
+				message="the-entry-could-not-be-found" />
+<liferay-ui:error key="noPermissions"
+				message="you-do-not-have-the-required-permissions" />
+
 <liferay-ui:search-container
 	emptyResultsMessage="no-import-processes-were-found"
 	iteratorURL="<%= portletURL %>"
@@ -64,12 +69,12 @@ OrderByComparator orderByComparator = BackgroundTaskComparatorFactoryUtil.getBac
 
 		<liferay-ui:search-container-column-text>
 			<c:if test="<%= !backgroundTask.isInProgress() %>">
-				<portlet:actionURL var="deleteBackgroundTaskURL">
-					<portlet:param name="struts_action" value="/group_pages/delete_background_task" />
-					<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
-					<portlet:param name="backgroundTaskId" value="<%= String.valueOf(backgroundTask.getBackgroundTaskId()) %>" />
-				</portlet:actionURL>
-
+				<liferay-portlet:actionURL var="deleteBackgroundTaskURL">
+							<portlet:param name="<%= ActionRequest.ACTION_NAME %>" value="deleteBackgroundTask" />
+							<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
+							<portlet:param name="backgroundTaskId" value="<%= String.valueOf(backgroundTask.getBackgroundTaskId()) %>" />
+				</liferay-portlet:actionURL>
+						
 				<%
 				Date completionDate = backgroundTask.getCompletionDate();
 				%>
@@ -89,7 +94,7 @@ OrderByComparator orderByComparator = BackgroundTaskComparatorFactoryUtil.getBac
 int incompleteBackgroundTaskCount = BackgroundTaskLocalServiceUtil.getBackgroundTasksCount(groupId, NotesAttachmentTaskExecutor.class.getName(), false);
 %>
 
-<div class="incomplete-process-message">
+<div class="hide incomplete-process-message">
 	<liferay-util:include page="/incomplete_process_message.jsp"  servletContext="<%= application %>" >
 		<liferay-util:param name="incompleteBackgroundTaskCount" value="<%= String.valueOf(incompleteBackgroundTaskCount) %>" />
 	</liferay-util:include>

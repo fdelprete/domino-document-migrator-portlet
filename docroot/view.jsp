@@ -325,6 +325,19 @@
 		},
 		['aui-io-plugin-deprecated', 'aui-io', 'liferay-util-window']
 	);
+</aui:script>
 
+<aui:script use="liferay-domino-import">
+	<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" var="importProcessesURL">
+	</liferay-portlet:resourceURL>
 
+	new Liferay.DominoImport(
+		{
+			form: document.<portlet:namespace />fm1,
+			incompleteProcessMessageNode: '#<portlet:namespace />incompleteProcessMessage',
+			namespace: '<portlet:namespace />',
+			processesNode: '#importProcesses',
+			processesResourceURL: '<%= importProcessesURL.toString() %>'
+		}
+	);
 </aui:script>

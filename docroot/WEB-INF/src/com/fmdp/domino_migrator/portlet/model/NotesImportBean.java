@@ -1,17 +1,16 @@
 package com.fmdp.domino_migrator.portlet.model;
 
-import java.util.Date;
 
 public class NotesImportBean {
 
-	String serverName;
-	String notesDatabase;
-	String notesView;
-	long documentsImported;
-	long documentsWithProblem;
-	long totalDocuments;
-	long totalAttachments;
-	Date importDate;
+	
+	String serverName = "";
+	String notesDatabase = "";
+	String notesView = "";
+	int documentsImported = 0;
+	int documentsWithProblem = 0;
+	int totalDocuments = 0;
+	int totalAttachments = 0;
 	
 	public String getServerName() {
 		return serverName;
@@ -37,43 +36,36 @@ public class NotesImportBean {
 		this.notesView = notesView;
 	}
 
-	public long getDocumentsImported() {
+	public int getDocumentsImported() {
 		return documentsImported;
 	}
 
-	public void setDocumentsImported(long documentsImported) {
+	public void setDocumentsImported(int documentsImported) {
 		this.documentsImported = documentsImported;
 	}
 
-	public long getDocumentsWithProblem() {
+	public int getDocumentsWithProblem() {
 		return documentsWithProblem;
 	}
 
-	public void setDocumentsWithProblem(long documentsWithProblem) {
+	public void setDocumentsWithProblem(int documentsWithProblem) {
 		this.documentsWithProblem = documentsWithProblem;
 	}
 
-	public Date getImportDate() {
-		return importDate;
-	}
 
-	public void setImportDate(Date importDate) {
-		this.importDate = importDate;
-	}
-
-	public long getTotalDocuments() {
+	public int getTotalDocuments() {
 		return totalDocuments;
 	}
 
-	public void setTotalDocuments(long totalDocuments) {
+	public void setTotalDocuments(int totalDocuments) {
 		this.totalDocuments = totalDocuments;
 	}
 
-	public long getTotalAttachments() {
+	public int getTotalAttachments() {
 		return totalAttachments;
 	}
 
-	public void setTotalAttachments(long totalAttachments) {
+	public void setTotalAttachments(int totalAttachments) {
 		this.totalAttachments = totalAttachments;
 	}
 
@@ -83,8 +75,7 @@ public class NotesImportBean {
 				+ notesDatabase + ", notesView=" + notesView + ", documentsImported=" + documentsImported
 				+ ", documentsWithProblem=" + documentsWithProblem
 				+ ", totalDocuments=" + totalDocuments
-				+ ", totalAttachments=" + totalAttachments
-				+ ", importDate=" + importDate.toString() + "]";
+				+ ", totalAttachments=" + totalAttachments + "]";
 	}
 
 }
