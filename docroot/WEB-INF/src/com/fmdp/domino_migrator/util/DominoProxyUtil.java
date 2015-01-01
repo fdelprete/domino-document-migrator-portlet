@@ -56,6 +56,9 @@ public class DominoProxyUtil {
                     //Could not get IOR from Domino Server.
                     _log.info("Unable to open a DIIOP connection with " + dominoServer + ".  Make sure the DIIOP and HTTP tasks are running on the Domino server, and that ports are open.  NotesException - " + e.id + " " + e.getLocalizedMessage() + ".");
                     break;
+                case NotesError.NOTES_ERR_SESOPEN_FAILED:
+                	_log.info("Could not oprn connection with " + dominoServer + ".  Make sure the DIIOP and HTTP tasks are running on the Domino server, and that ports are open.  NotesException - " + e.id + " " + e.getLocalizedMessage() + ".");
+                	break;
                 default:
                     //Unexpected error.
                     _log.error("NotesException - " + e.id + " " + e.getLocalizedMessage() + ".");

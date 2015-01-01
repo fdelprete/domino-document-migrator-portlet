@@ -36,5 +36,6 @@ dominoProxy.openDominoSession(dominoHostName, dominoUserName, dominoUserPassword
 	</c:choose>
 </div>
 <%
-dominoProxy.closeDominoSession();
+if (dominoProxy.isDominoSessionAvailable())
+	dominoProxy.closeDominoSession();
 %>

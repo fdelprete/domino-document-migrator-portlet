@@ -14,6 +14,17 @@
 			"dominoUserName", StringPool.BLANK);
 	String dominoUserPassword = portletPreferences.getValue(
 			"dominoUserPassword", StringPool.BLANK);
+	
+	if (Validator.isNull(dominoHostName) ||
+			Validator.isNull(dominoUserName) ||
+			Validator.isNull(dominoUserPassword)) {
+	%>
+		<liferay-ui:message key="please-define-each-of-the-domino-properties-database-name,-view-name-and-field-name" />
+
+	<%
+		return;
+	}
+			
 	String dominoDatabaseName = portletPreferences.getValue(
 			"dominoDatabaseName", StringPool.BLANK);
 	String dominoViewName = portletPreferences.getValue(
@@ -84,39 +95,41 @@
 				<liferay-ui:panel collapsible="<%=true%>" extended="<%=true%>"
 					id="domImportServer" persistState="<%=true%>"
 					title="domino-server-parameters">
-					<liferay-ui:error key="dominoServerNameRequired"
-						message="please-enter-the-domino-server-name" />
-					<liferay-ui:error key="dominoUserNameRequired"
-						message="please-enter-the-domino-user-name" />
-					<liferay-ui:error key="dominoUserPasswordRequired"
-						message="please-enter-the-password-for-the-domino-user-name" />
+					<div class="alert">
+						<liferay-ui:message key="change-connection-parameters-in-the-configuration-page" />
+					</div>
+					<dl class="editing-disabled">
+						<dt>
+							<liferay-ui:message key="domino-host-name" />
+						</dt>
+						<dd>
+							<%=dominoHostName%>
+						</dd>
+						<dt>
+							<liferay-ui:message key="username" />
+						</dt>
+						<dd>
+							<%=dominoUserName%>
+						</dd>
+						<dt>
+							<liferay-ui:message key="password" />
+						</dt>
+						<dd>
+							<%="****"%>
+						</dd>
 
-					<aui:fieldset>
-						<aui:input cssClass="lfr-input-text-container"
-							helpMessage="the-domino-host-name-is" label="domino-host-name"
-							name="dominoHostName" type="text" value="<%=dominoHostName%>" />
+					</dl>
+					<aui:button-row>
 
-						<aui:input cssClass="lfr-input-text-container"
-							helpMessage="the-domino-user-name-is" label="username"
-							name='<%="dominoUserName"%>' type="text"
-							value="<%=dominoUserName%>" />
+						<%
+							String taglibOnClick = renderResponse
+																.getNamespace()
+																+ "testSettings('dominoConnection');";
+						%>
+						<aui:button onClick="<%=taglibOnClick%>"
+							value="test-domino-connection" />
+					</aui:button-row>
 
-						<aui:input cssClass="lfr-input-text-container" label="password"
-							name='<%="dominoUserPassword"%>' type="password"
-							value="<%=dominoUserPassword%>" />
-
-						<aui:button-row>
-
-							<%
-								String taglibOnClick = renderResponse
-																	.getNamespace()
-																	+ "testSettings('dominoConnection');";
-							%>
-
-							<aui:button onClick="<%=taglibOnClick%>"
-								value="test-domino-connection" />
-						</aui:button-row>
-					</aui:fieldset>
 				</liferay-ui:panel>
 				<liferay-ui:panel collapsible="<%=true%>" extended="<%=true%>"
 					id="domImportDatabase" persistState="<%=true%>"
@@ -300,9 +313,9 @@
 			}
 
 			if (url != null) {
-				data.<portlet:namespace />dominoHostName = document.<portlet:namespace />fm['<portlet:namespace />dominoHostName'].value;
-				data.<portlet:namespace />dominoUserName = document.<portlet:namespace />fm['<portlet:namespace />dominoUserName'].value;
-				data.<portlet:namespace />dominoUserPassword = document.<portlet:namespace />fm['<portlet:namespace />dominoUserPassword'].value;
+				data.<portlet:namespace />dominoHostName = '<%= dominoHostName %>'
+				data.<portlet:namespace />dominoUserName = '<%= dominoUserName %>'
+				data.<portlet:namespace />dominoUserPassword = '<%= dominoUserPassword %>'
 
 				var dialog = Liferay.Util.Window.getWindow(
 					{

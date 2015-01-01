@@ -4,12 +4,14 @@ package com.fmdp.domino_migrator.portlet;
 
 import lotus.domino.*;
 
+import com.fmdp.domino_migrator.util.DominoProxyUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
+import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
-import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -20,20 +22,10 @@ import javax.portlet.RenderResponse;
 
 
 public class ConfigurationActionImpl implements ConfigurationAction {
-	private static Log _log = LogFactoryUtil.getLog(ConfigurationActionImpl.class);
 	
     public void processAction(PortletConfig portletConfig,
             ActionRequest actionRequest, ActionResponse actionResponse)
             throws Exception {
-        System.out.println("Start");		
- 
-        String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
-        System.out.println("cmd: " + cmd);
-        if (!cmd.equals(Constants.UPDATE)) {
-            return;
-        }
-
-        System.out.println("Config");
         
 		String dominoHostName = ParamUtil.getString(
 				actionRequest, "dominoHostName");
@@ -41,34 +33,41 @@ public class ConfigurationActionImpl implements ConfigurationAction {
 				actionRequest, "dominoUserName");
 		String dominoUserPassword = ParamUtil.getString(
 				actionRequest, "dominoUserPassword");
-		System.out.println("dominoHostName " + dominoHostName);
-		System.out.println("dominoUserName " + dominoUserName);
-		System.out.println("dominoUserPassword " + dominoUserPassword);
-		try {
-        Session s = NotesFactory.createSession(
-        		dominoHostName, dominoUserName, dominoUserPassword);
-        String p = s.getPlatform();
-        System.out.println("Platform = " + p);		
-        String commonUserName = s.getCommonUserName();
-        System.out.println("commonUserName " + commonUserName);
-		} catch (NotesException e2) {
-			_log.error(e2.getLocalizedMessage());
-			e2.printStackTrace ();
+
+		if (Validator.isNull(dominoHostName)) {
+			SessionErrors.add(actionRequest, "dominoServerNameRequired");
 		}
+		if (Validator.isNull(dominoUserName)) {
+			SessionErrors.add(actionRequest, "dominoUserNameRequired");
+		}
+		if (Validator.isNull(dominoUserPassword)) {
+			SessionErrors.add(actionRequest, "dominoUserPasswordRequired");
+		}
+		if (SessionErrors.isEmpty(actionRequest)) {
+
+			DominoProxyUtil dominoProxy = DominoProxyUtil.getInstance();
+			dominoProxy.openDominoSession(dominoHostName, dominoUserName, dominoUserPassword);
+			if (!dominoProxy.isDominoSessionAvailable()) {
+				SessionErrors.add(actionRequest, "noDominoSessionAvalaible");
+				return;
+			}
 	        String portletResource = ParamUtil.getString(actionRequest,"portletResource");
 	        PortletPreferences preferences = actionRequest.getPreferences();
-	        //PortletPreferences preferences = PortletPreferencesFactoryUtil.getPortletSetup(actionRequest, portletResource);
 	        preferences.setValue("dominoHostName", dominoHostName);
 	        preferences.setValue("dominoUserName", dominoUserName);
 	        preferences.setValue("dominoUserPassword", dominoUserPassword);
 	        preferences.store();
-	 
+	
+	        dominoProxy.closeDominoSession();
+	        
 	        SessionMessages.add(actionRequest, "success");
 	        SessionMessages.add(
 	                actionRequest,
 	                portletConfig.getPortletName() +
 	                SessionMessages.KEY_SUFFIX_REFRESH_PORTLET,
-	                portletResource);        
+	                portletResource);
+		}
+
     }
  
     public String render(PortletConfig portletConfig,
@@ -77,4 +76,5 @@ public class ConfigurationActionImpl implements ConfigurationAction {
  
         return "/configuration.jsp";
     }
+	private static Log _log = LogFactoryUtil.getLog(ConfigurationActionImpl.class);
 }

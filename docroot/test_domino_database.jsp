@@ -101,5 +101,6 @@ view.recycle();
 	<liferay-ui:message key="liferay-has-successfully-opened-the-domino-database-on-server" />
 </div>
 <%
-dominoProxy.closeDominoSession();
+if (dominoProxy.isDominoSessionAvailable())
+	dominoProxy.closeDominoSession();
 %>

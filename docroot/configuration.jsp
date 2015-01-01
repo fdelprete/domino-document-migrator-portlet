@@ -7,9 +7,6 @@ String dominoHostName = portletPreferences.getValue("dominoHostName", StringPool
 String dominoUserName = portletPreferences.getValue("dominoUserName", StringPool.BLANK);
 String dominoUserPassword = portletPreferences.getValue("dominoUserPassword", StringPool.BLANK);
 
-if (Validator.isNotNull(portletResource)) {
-    preferences = PortletPreferencesFactoryUtil.getPortletSetup(request, portletResource);
-}
 %>
 
 <liferay-portlet:actionURL var="configurationURL"
@@ -19,15 +16,24 @@ if (Validator.isNotNull(portletResource)) {
 </liferay-portlet:renderURL>
 <aui:form method="post" action="<%=configurationURL.toString()%>"
 	name="fm">
-	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
 	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
-	
+	<liferay-ui:error key="dominoServerNameRequired"
+		message="please-enter-the-domino-server-name" />
+	<liferay-ui:error key="dominoUserNameRequired"
+		message="please-enter-the-domino-user-name" />
+	<liferay-ui:error key="dominoUserPasswordRequired"
+		message="please-enter-the-password-for-the-domino-user-name" />
+	<liferay-ui:error key="noDominoSessionAvalaible"
+		message="no-domino-session-avaliable" />
+
+		
+
 		<aui:fieldset>
 			<aui:input cssClass="lfr-input-text-container" helpMessage="the-domino-host-name-is" label="domino-host-name" name="dominoHostName" type="text" value="<%= dominoHostName %>" />
 	
-			<aui:input cssClass="lfr-input-text-container" helpMessage="the-domino_user_name-is" label="username" name='<%= "dominoUserName" %>' type="text" value="<%= dominoUserName %>" />
+			<aui:input cssClass="lfr-input-text-container" helpMessage="the-domino-user-name-is" label="username" name='<%= "dominoUserName" %>' type="text" value="<%= dominoUserName %>" />
 	
-			<aui:input cssClass="lfr-input-text-container" label="password" name='<%= "dominoUserPassword" %>' type="text" value="<%= dominoUserPassword %>" />
+			<aui:input cssClass="lfr-input-text-container" label="password" name='<%= "dominoUserPassword" %>' type="password" value="<%= dominoUserPassword %>" />
 	
 			<aui:button-row>
 	
@@ -75,7 +81,7 @@ if (Validator.isNotNull(portletResource)) {
 						dialog: {
 							destroyOnHide: true
 						},
-						title: '<%= UnicodeLanguageUtil.get(pageContext, "domino") %>'
+						title: '<%= UnicodeLanguageUtil.get(pageContext, "domino-test") %>'
 					}
 				);
 

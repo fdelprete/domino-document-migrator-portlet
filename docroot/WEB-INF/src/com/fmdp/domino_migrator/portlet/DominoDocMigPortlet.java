@@ -154,12 +154,11 @@ public class DominoDocMigPortlet extends MVCPortlet {
 	protected void validateDominoParameters(ActionRequest actionRequest) 
 			throws Exception {
 
-		String dominoHostName = ParamUtil.getString(
-				actionRequest, "dominoHostName");
-		String dominoUserName = ParamUtil.getString(
-				actionRequest, "dominoUserName");
-		String dominoUserPassword = ParamUtil.getString(
-				actionRequest, "dominoUserPassword");
+	    PortletPreferences preferences = actionRequest.getPreferences();
+		String dominoHostName = preferences.getValue("dominoHostName", StringPool.BLANK);
+		String dominoUserName = preferences.getValue("dominoUserName", StringPool.BLANK);
+		String dominoUserPassword = preferences.getValue("dominoUserPassword", StringPool.BLANK);
+
 		String dominoDatabaseName = ParamUtil.getString(
 				actionRequest, "dominoDatabaseName");
 		String dominoViewName = ParamUtil.getString(
@@ -227,7 +226,6 @@ public class DominoDocMigPortlet extends MVCPortlet {
 			ACL acl = db.getACL();
 			Vector<?>  roles = acl.getRoles();
 		    String theRoles = StringUtil.merge(roles);
-		    PortletPreferences preferences = actionRequest.getPreferences();
 		    preferences.setValue("dominoDatabaseAcl", theRoles);
 		    preferences.store();
 		    
