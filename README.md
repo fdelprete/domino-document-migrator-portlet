@@ -17,7 +17,7 @@ If in your Notes document you have a field storing tags you can also import the 
 The import process (could be time consuming) is started as liferay BackgroundTask based on the robust Liferay ESB.
 
 TO DO
-- Managing BackgroundTastStatus
-- Remove or decide to move server connection parameters in the configuration page.
+- Managing BackgroundTastStatus (done 2014-12-31)
+- Remove or decide to move server connection parameters in the configuration page. (done 2015-01-01)
 - Mapping of Notes document category to liferay asset category.
 - Mapping of Roles in Notes readers and authors field to liferay site roles.
