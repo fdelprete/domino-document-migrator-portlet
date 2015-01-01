@@ -163,19 +163,18 @@
 								<liferay-ui:input-resource id="folderName" url="<%=folderName%>" />
 								<aui:button name="selectFolderButton" id="selectFolderButton"
 									value="select" disabled="<%=false%>" />
+							</div>
+							<liferay-ui:icon-menu>
 								<liferay-security:permissionsURL
 									modelResource="<%=modelResource%>"
-									modelResourceDescription="<%=HtmlUtil
-												.escape(modelResourceDescription)%>"
+									modelResourceDescription="<%=HtmlUtil.escape(modelResourceDescription)%>"
 									resourcePrimKey="<%=resourcePrimKey%>" var="permissionsURL"
-									windowState="<%=LiferayWindowState.POP_UP
-												.toString()%>" />
-
+									windowState="<%=LiferayWindowState.POP_UP.toString()%>" />
 								<liferay-ui:icon image="permissions" method="get"
 									url="<%=permissionsURL%>" useDialog="<%=true%>"
-									label="permissions" />
+									label="permissions" message="edit-permissions"/>
+							</liferay-ui:icon-menu>
 
-							</div>
 						</aui:field-wrapper>
 						<aui:input name="newFolderId" type="hidden"
 							value="<%=newFolderId%>" />

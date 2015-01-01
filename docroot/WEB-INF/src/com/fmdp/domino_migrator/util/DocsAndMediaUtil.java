@@ -22,6 +22,17 @@ import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 public class DocsAndMediaUtil {
 	private static Log _log = LogFactoryUtil.getLog(DocsAndMediaUtil.class);
 	
+	/**
+	 * @param userId
+	 * @param groupId
+	 * @param folderId
+	 * @param file
+	 * @param sourceFileName
+	 * @return
+	 * @throws PortalException
+	 * @throws SystemException
+	 * @throws FileNotFoundException
+	 */
 	public static FileEntry uploadFileToFolder(long userId, long groupId, 
 			long folderId, File file, String sourceFileName) throws PortalException, SystemException, FileNotFoundException {
 		
@@ -85,6 +96,13 @@ public class DocsAndMediaUtil {
 		}
 		return fileEntry;
 	}
+	/**
+	 * @param userId
+	 * @param fe
+	 * @param tags
+	 * @throws PortalException
+	 * @throws SystemException
+	 */
 	public static void addTags(long userId, FileEntry fe, String[] tags) throws PortalException, SystemException {
 		DLAppLocalServiceUtil.updateAsset(userId, fe, fe.getLatestFileVersion(), null, tags, null);
 	}

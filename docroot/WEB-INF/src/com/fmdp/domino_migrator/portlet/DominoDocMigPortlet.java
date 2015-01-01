@@ -66,6 +66,9 @@ public class DominoDocMigPortlet extends MVCPortlet {
         }
 		boolean isValid = false;
 		validateDominoParameters(actionRequest);
+		
+		// if some error was added to SessionError than the validation failed
+		// in anycase we store the preferences with the value of isValid
 		if (SessionErrors.isEmpty(actionRequest)) {
 			isValid = true;
 		}
@@ -114,35 +117,40 @@ public class DominoDocMigPortlet extends MVCPortlet {
 			}
 	}
 
+	/**
+	 * @param actionRequest
+	 * @param actionResponse
+	 * @throws Exception
+	 */
 	public void deleteBackgroundTask(javax.portlet.ActionRequest actionRequest,
 			javax.portlet.ActionResponse actionResponse)
 			throws Exception {
 
-		
-		
 			long backgroundTaskId = ParamUtil.getLong(
 				actionRequest, "backgroundTaskId");
+			if (_log.isDebugEnabled()) {			
+				_log.debug("backgroundTaskId " + backgroundTaskId);
+			}
 			
-			_log.debug("backgroundTaskId " + backgroundTaskId);
-			System.out.print("OK" + StringPool.NEW_LINE);
 			try {
-			BackgroundTaskLocalServiceUtil.deleteBackgroundTask(backgroundTaskId);
-			sendRedirect(actionRequest, actionResponse);
+				BackgroundTaskLocalServiceUtil.deleteBackgroundTask(backgroundTaskId);
+				sendRedirect(actionRequest, actionResponse);
 			}
 			catch (Exception e) {
 				if (e instanceof NoSuchBackgroundTaskException) {
-
 					SessionErrors.add(actionRequest, "entryNotFound");
 				}
 				else if (e instanceof PrincipalException) {
-					
 					SessionErrors.add(actionRequest, "noPermissions");
-				
 				} else {
 					throw e;
 				}
 			}
 		}
+	/**
+	 * @param actionRequest
+	 * @throws Exception
+	 */
 	protected void validateDominoParameters(ActionRequest actionRequest) 
 			throws Exception {
 
@@ -162,7 +170,11 @@ public class DominoDocMigPortlet extends MVCPortlet {
 				actionRequest, "dominoFieldNameWithTags");
 		boolean extractTags = ParamUtil.getBoolean(
 				actionRequest, "extractTags");
-
+		/*
+		 * 
+		 * START: required fields
+		 * 
+		 */
 		if (Validator.isNull(dominoHostName)) {
 			SessionErrors.add(actionRequest, "dominoServerNameRequired");
 		}
@@ -184,7 +196,16 @@ public class DominoDocMigPortlet extends MVCPortlet {
 		if (extractTags && Validator.isNull(dominoFieldNameWithTags)) {
 			SessionErrors.add(actionRequest, "dominoFieldNameWithTagsRequired");
 		}
+		/*
+		 * 
+		 * END: required fields
+		 * 
+		 */
 
+		/*
+		 * Now if all the required field values are available 
+		 * we try to connect to Lotus Domino Server
+		 */
 		if (SessionErrors.isEmpty(actionRequest)) {
 			DominoProxyUtil dominoProxy = DominoProxyUtil.getInstance();
 			dominoProxy.openDominoSession(dominoHostName, dominoUserName, dominoUserPassword);
@@ -198,6 +219,11 @@ public class DominoDocMigPortlet extends MVCPortlet {
 				SessionErrors.add(actionRequest, "dominoDatabaseUnavalaible");
 				return;
 			}
+			
+			/*
+			 * Here we get the db ACL role list (if exists) 
+			 * and we store it in the preference for future uses
+			 */
 			ACL acl = db.getACL();
 			Vector<?>  roles = acl.getRoles();
 		    String theRoles = StringUtil.merge(roles);
@@ -205,6 +231,9 @@ public class DominoDocMigPortlet extends MVCPortlet {
 		    preferences.setValue("dominoDatabaseAcl", theRoles);
 		    preferences.store();
 		    
+		    /*
+		     * Notes View checking
+		     */
 			View view = db.getView(dominoViewName);
 			if (view == null ) {
 				SessionErrors.add(actionRequest, "dominoViewUnavalaible");
@@ -214,6 +243,12 @@ public class DominoDocMigPortlet extends MVCPortlet {
 		}
 		
 	}
+	/**
+	 * @param actionRequest
+	 * @param actionResponse
+	 * @throws PortletException
+	 * @throws IOException
+	 */
 	public void startTask(javax.portlet.ActionRequest actionRequest,
 			javax.portlet.ActionResponse actionResponse)
 			throws PortletException, IOException {
@@ -225,6 +260,10 @@ public class DominoDocMigPortlet extends MVCPortlet {
         ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
         String portletId = PortalUtil.getPortletId(actionRequest);
+
+        /*
+         * We need the serviceContext for the AddBackgroundTask
+         */
         ServiceContext serviceContext = null;
 		try {
 			serviceContext = ServiceContextFactory.getInstance(actionRequest);
@@ -239,9 +278,22 @@ public class DominoDocMigPortlet extends MVCPortlet {
 					actionRequest, "errorGettingServiceContext");
 			return;
 		}
+
+        /*
+         * We need the servletContextNames for the AddBackgroundTask
+         */
+
+		HttpServletRequest request = PortalUtil.getHttpServletRequest(actionRequest);
+		ServletContext servletContext = request.getSession().getServletContext();
 		
-		PortletPreferences preferences = actionRequest.getPreferences();
-		
+		String[] servletContextNames = new String[1];
+		servletContextNames[0] = servletContext.getServletContextName();
+
+		/*
+		 * We had to prepare the taskContextMap
+		 * we get the attributes and their values from the portletPreferences
+		 */
+		PortletPreferences preferences = actionRequest.getPreferences();		
 		String dominoHostName = preferences.getValue("dominoHostName", StringPool.BLANK);
 		String dominoUserName = preferences.getValue("dominoUserName", StringPool.BLANK);
 		String dominoUserPassword = preferences.getValue("dominoUserPassword", StringPool.BLANK);
@@ -250,17 +302,9 @@ public class DominoDocMigPortlet extends MVCPortlet {
 		String dominoFieldName = preferences.getValue("dominoFieldName", StringPool.BLANK);
 		String dominoFieldNameWithTags = preferences.getValue("dominoFieldNameWithTags", StringPool.BLANK);
 		boolean extractTags = GetterUtil.getBoolean(preferences.getValue("extractTags", StringPool.BLANK));
-		
 		long newFolderId = GetterUtil.getLong(preferences.getValue("newFolderId", StringPool.BLANK));
 		
-		HttpServletRequest request = PortalUtil.getHttpServletRequest(actionRequest);
-		ServletContext servletContext = request.getSession().getServletContext();
-		
-		String[] servletContextNames = new String[1];
-		servletContextNames[0] = servletContext.getServletContextName();
-
 		Map<String, Serializable> taskContextMap = new HashMap<String, Serializable>();
-
 		taskContextMap.put("portletId", portletId);
 		taskContextMap.put("dominoHostName", dominoHostName);
 		taskContextMap.put("dominoUserName", dominoUserName);
@@ -278,7 +322,11 @@ public class DominoDocMigPortlet extends MVCPortlet {
         	BackgroundTask backgroundTask = BackgroundTaskLocalServiceUtil.addBackgroundTask(themeDisplay.getUserId(), themeDisplay.getSiteGroupId(), 
 					StringPool.BLANK, servletContextNames, NotesAttachmentTaskExecutor.class, 
 					taskContextMap, serviceContext);
+        	/*
+        	 * we get the backgroundTaskId and we pass it to the portlet web
+        	 */
         	actionRequest.setAttribute("backgroundTaskId", backgroundTask.getBackgroundTaskId());
+        	
 		} catch (PortalException e) {
 			e.printStackTrace();
 			SessionErrors.add(
@@ -291,7 +339,6 @@ public class DominoDocMigPortlet extends MVCPortlet {
 			return;
 		}
 
-	 
 	        SessionMessages.add(actionRequest, "success");
 
 	}
