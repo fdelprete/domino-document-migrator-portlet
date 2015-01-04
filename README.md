@@ -19,5 +19,5 @@ The import process (could be time consuming) is started as liferay BackgroundTas
 TO DO
 - Managing BackgroundTastStatus (done 2014-12-31)
 - Remove or decide to move server connection parameters in the configuration page. (done 2015-01-01)
-- Mapping of Notes document category to liferay asset category.
+- Mapping of Notes document category to liferay asset category (done 2015-01-04).
 - Mapping of Roles in Notes readers and authors field to liferay site roles.
