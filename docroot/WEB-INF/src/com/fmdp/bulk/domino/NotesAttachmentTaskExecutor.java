@@ -17,6 +17,8 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTaskResult;
 import com.liferay.portal.kernel.backgroundtask.BaseBackgroundTaskExecutor;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
@@ -48,11 +50,9 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 		String dominoFieldNameWithTags = MapUtil.getString(taskContextMap, "dominoFieldNameWithTags");
 		String dominoFieldNameWithCategories = MapUtil.getString(taskContextMap, "dominoFieldNameWithCategories");
 		String dominoFieldNameWithDescr = MapUtil.getString(taskContextMap, "dominoFieldNameWithDescr");
+		String dominoFieldNameWithTitle = MapUtil.getString(taskContextMap, "dominoFieldNameWithTitle");
 		String vocabularyName = MapUtil.getString(taskContextMap, "vocabularyName");
-		boolean extractTags = MapUtil.getBoolean(taskContextMap, "extractTags");
 		boolean extractCategories = MapUtil.getBoolean(taskContextMap, "extractCategories");
-		boolean extractDescription = MapUtil.getBoolean(taskContextMap, "extractDescription");
-		long newFolderId = MapUtil.getLong(taskContextMap, "newFolderId");
 		long groupId = MapUtil.getLong(taskContextMap, "groupId");
 		long userId = MapUtil.getLong(taskContextMap, "userId");
 		String localeComp = MapUtil.getString(taskContextMap, "locale");;
@@ -102,7 +102,6 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 			assetVocabulary = DocsAndMediaUtil.createVocabulary(userId, groupId, locale, vocabularyName);
 		}
 		
-		int notesDocProcessed = 0;
 		Document doc = view.getFirstDocument();
 		if (doc == null ) {
 			BackgroundTaskResult backgroundTaskResult = new BackgroundTaskResult(
@@ -119,6 +118,7 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 		notesImportBean.setNotesFieldWithTags(dominoFieldNameWithTags);
 		notesImportBean.setNotesFieldWithCategories(dominoFieldNameWithCategories);
 		notesImportBean.setNotesFieldWithDescr(dominoFieldNameWithDescr);
+		notesImportBean.setNotesFieldWithTitle(dominoFieldNameWithTitle);
 		notesImportBean.setVocabularyName(vocabularyName);
 		notesImportBean.setDocumentsWithProblem(0);
 		notesImportBean.setTotalDocuments(0);
@@ -128,18 +128,18 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 		
 		int totDocs = vec.getCount();
 		
-//		System.out.print("totDocs " + totDocs + StringPool.NEW_LINE);
 		notesImportBean.setTotalDocuments(totDocs);
+
+		int notesDocProcessed = 0;
 		
 		int numAttachments = 0;
 		
 		while (doc != null) {
 			
 			notesDocProcessed++;
-			System.out.print("notesDocProcessed " + notesDocProcessed + StringPool.NEW_LINE);
-			
-			System.out.print("notesImportBean " + notesImportBean.toString() + StringPool.NEW_LINE);
-			
+			if (_log.isDebugEnabled()) {
+				_log.debug("notesDocProcessed " + notesDocProcessed + " - notesImportBean " + notesImportBean.toString());
+			}
 			numAttachments += NotesDocumentUtil.ExtractAndSaveAttachment(userId, groupId, locale, doc, taskContextMap, assetVocabulary, serviceContext);
 			
 			notesImportBean.setDocumentsImported(notesDocProcessed);
@@ -195,4 +195,7 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 	    	c = (String) tempStringTokenizer.nextElement();
 	    return new Locale(l,c);
 	}
+
+	private static Log _log = LogFactoryUtil.getLog(NotesAttachmentTaskExecutor.class);
+
 }

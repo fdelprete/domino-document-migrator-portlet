@@ -33,6 +33,7 @@ import com.liferay.portlet.asset.model.AssetCategory;
 import com.liferay.portlet.asset.model.AssetVocabulary;
 import com.liferay.portlet.asset.service.AssetCategoryLocalServiceUtil;
 import com.liferay.portlet.asset.service.AssetVocabularyLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.NoSuchFolderException;
 import com.liferay.portlet.documentlibrary.service.DLAppLocalServiceUtil;
 
 public class DocsAndMediaUtil {
@@ -112,6 +113,33 @@ public class DocsAndMediaUtil {
 		}
 		return fileEntry;
 	}
+	
+	public static long getRepositoryIdFromFloderId(long folderId) throws PortalException, SystemException {
+		Folder folderEntry = null;
+        		
+		folderEntry = DLAppLocalServiceUtil.getFolder(folderId);
+		if (folderEntry == null) {
+			_log.error("Error getting folder entry");
+			return 0;
+		}
+		return folderEntry.getRepositoryId();
+	}
+	
+	public static long getOrCreateFolder(ServiceContext serviceContext,
+	        long userId, long repositoryId, long parentFolderId, String folderName)
+	        throws PortalException, SystemException {
+
+	    try {
+	        Folder prev = DLAppLocalServiceUtil.getFolder(
+	            repositoryId, parentFolderId, folderName);
+	        return prev.getFolderId();
+	    } catch (final NoSuchFolderException e) {
+	        final Folder newFolder = DLAppLocalServiceUtil.addFolder(userId,
+	            repositoryId, parentFolderId, folderName,
+	            "", serviceContext);
+	        return newFolder.getFolderId();
+	    }
+	}
 	/**
 	 * @param userId
 	 * @param fe
@@ -119,7 +147,7 @@ public class DocsAndMediaUtil {
 	 * @throws PortalException
 	 * @throws SystemException
 	 */
-	public static void addTags(long userId, FileEntry fe, long [] catIds, String[] tags) throws Exception {
+	public static void addTagsAndCategories(long userId, FileEntry fe, long [] catIds, String[] tags) throws Exception {
 		try {
 			DLAppLocalServiceUtil.updateAsset(userId, fe, fe.getLatestFileVersion(), catIds, tags, null);
 		} catch (Exception e) {
@@ -160,13 +188,17 @@ public class DocsAndMediaUtil {
 		return createdVocabulary;
 	}
 	
-	public static List<String> getChildCategory(long userId, long groupId, Locale locale, List<String> cat, int element, long parentCategoryId, 
-			long vocabularyId, ServiceContext serviceContext){
-		List<String> catIds = new ArrayList<String>();
+	public static void getChildCategory(long userId, long groupId, Locale locale, List<String> cat, int element, long parentCategoryId, 
+			long vocabularyId, ServiceContext serviceContext, List<String> returnedIds){
+				
 		Map<Locale, String> titleMap = new HashMap<Locale, String>();
 		titleMap.put(locale, cat.get(element));
+		
 		Map<Locale, String> descriptionMap = new HashMap<Locale, String>();
 		descriptionMap.put(locale, cat.get(element));
+		
+		System.out.print("singleCat " + cat.get(element));
+		
 		AssetCategory createdCategory = null;
 		try {
 			createdCategory = AssetCategoryLocalServiceUtil.addCategory(userId, parentCategoryId, 
@@ -191,11 +223,11 @@ public class DocsAndMediaUtil {
 		} catch (SystemException e) {
 			_log.error("Errore wihle create category with name : " + cat.get(element) + "  :: " +  e.getMessage(), e);
 		}
-		if (element < cat.size() && !cat.get(element + 1).isEmpty()){
-				getChildCategory(userId, groupId, locale, cat, element + 1, createdCategory.getCategoryId(), vocabularyId, serviceContext);
+		if ((element + 1) < cat.size()){
+				getChildCategory(userId, groupId, locale, cat, element + 1, createdCategory.getCategoryId(), vocabularyId, serviceContext, returnedIds);
 		}
-		catIds.add(Long.toString(createdCategory.getCategoryId()));
-		return catIds;
+		returnedIds.add(Long.toString(createdCategory.getCategoryId()));
+		System.out.print("catIds " + returnedIds.toString());
 	}
 }
 

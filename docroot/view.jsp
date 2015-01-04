@@ -39,6 +39,8 @@
 			"dominoDatabaseAcl", StringPool.BLANK);
 	String dominoFieldNameWithDescr = portletPreferences.getValue(
 			"dominoFieldNameWithDescr", StringPool.BLANK);
+	String dominoFieldNameWithTitle = portletPreferences.getValue(
+			"dominoFieldNameWithTitle", StringPool.BLANK);
 	String vocabularyName = portletPreferences.getValue(
 			"vocabularyName", StringPool.BLANK);
 
@@ -94,6 +96,8 @@
 				value="<%=Constants.UPDATE%>" />
 			<liferay-ui:success key="success"
 				message="the-domino-configuration-was-saved-and-seems-to-be-valid" />
+			<liferay-ui:success key="successTaskStarted"
+				message="the-import-task-has-been-started" />
 
 			<liferay-ui:error key="noDominoSessionAvalaible"
 				message="no-domino-session-avaliable" />
@@ -210,6 +214,12 @@
 					title="description-and-title-extraction">
 					<liferay-ui:error key="dominoFieldNameWithDescrRequired"
 						message="please-enter-the-field-name-containing-the-description-of-the-notes-document" />
+					<liferay-ui:error key="dominoFieldNameWithTitleRequired"
+						message="please-enter-the-field-name-containing-the-title-of-the-notes-document" />
+						
+					<aui:input cssClass="lfr-input-text-container"
+						label="domino-field-with-title" name="dominoFieldNameWithTitle"
+						value="<%=dominoFieldNameWithTitle%>" />
 
 					<aui:input label="extract-description" name="extractDescription" type="checkbox"
 						value="<%=extractDescription%>" />

@@ -16,6 +16,7 @@ public class NotesImportBean {
 	String notesFieldWithTags = "";
 	String notesFieldWithCategories = "";
 	String notesFieldWithDescr = "";
+	String notesFieldWithTitle = "";
 	String vocabularyName = "";
 	int documentsImported = 0;
 	int documentsWithProblem = 0;
@@ -76,6 +77,14 @@ public class NotesImportBean {
 
 	public void setNotesFieldWithDescr(String notesFieldWithDescr) {
 		this.notesFieldWithDescr = notesFieldWithDescr;
+	}
+
+	public String getNotesFieldWithTitle() {
+		return notesFieldWithTitle;
+	}
+
+	public void setNotesFieldWithTitle(String notesFieldWithDescr) {
+		this.notesFieldWithTitle = notesFieldWithTitle;
 	}
 
 	public String getVocabularyName() {
@@ -149,6 +158,8 @@ public class NotesImportBean {
 			importPropertyJSONObject.put(
 					"notesFieldWithDescr", this.notesFieldWithDescr);
 			importPropertyJSONObject.put(
+					"notesFieldWithTitle", this.notesFieldWithTitle);
+			importPropertyJSONObject.put(
 					"vocabularyName", this.vocabularyName);
 			
 			
@@ -166,6 +177,7 @@ public class NotesImportBean {
 				+ ", notesFieldWithTags=" + notesFieldWithTags
 				+ ", notesFieldWithCategories=" + notesFieldWithCategories
 				+ ", notesFieldWithDescr=" + notesFieldWithDescr
+				+ ", notesFieldWithTitle=" + notesFieldWithTitle
 				+ ", vocabularyName=" + vocabularyName
 				+ ", documentsImported=" + documentsImported
 				+ ", documentsWithProblem=" + documentsWithProblem

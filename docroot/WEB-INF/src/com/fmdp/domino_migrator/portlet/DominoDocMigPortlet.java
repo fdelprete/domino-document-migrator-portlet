@@ -89,6 +89,8 @@ public class DominoDocMigPortlet extends MVCPortlet {
 				actionRequest, "dominoFieldNameWithCategories");
 		String dominoFieldNameWithDescr = ParamUtil.getString(
 				actionRequest, "dominoFieldNameWithDescr");
+		String dominoFieldNameWithTitle = ParamUtil.getString(
+				actionRequest, "dominoFieldNameWithTitle");
 		String vocabularyName = ParamUtil.getString(
 				actionRequest, "vocabularyName");
 
@@ -114,6 +116,7 @@ public class DominoDocMigPortlet extends MVCPortlet {
 	        preferences.setValue("dominoFieldNameWithTags", dominoFieldNameWithTags);
 	        preferences.setValue("dominoFieldNameWithCategories", dominoFieldNameWithCategories);
 	        preferences.setValue("dominoFieldNameWithDescr", dominoFieldNameWithDescr);
+	        preferences.setValue("dominoFieldNameWithTitle", dominoFieldNameWithTitle);
 	        preferences.setValue("vocabularyName", vocabularyName);
 	        preferences.setValue("extractTags", String.valueOf(extractTags));
 	        preferences.setValue("extractCategories", String.valueOf(extractCategories));
@@ -180,6 +183,8 @@ public class DominoDocMigPortlet extends MVCPortlet {
 				actionRequest, "dominoFieldNameWithCategories");
 		String dominoFieldNameWithDescr = ParamUtil.getString(
 				actionRequest, "dominoFieldNameWithDescr");
+		String dominoFieldNameWithTitle = ParamUtil.getString(
+				actionRequest, "dominoFieldNameWithTitle");
 		String vocabularyName = ParamUtil.getString(
 				actionRequest, "vocabularyName");
 		boolean extractTags = ParamUtil.getBoolean(
@@ -210,6 +215,9 @@ public class DominoDocMigPortlet extends MVCPortlet {
 		}
 		if (Validator.isNull(dominoFieldName)) {
 			SessionErrors.add(actionRequest, "dominoFieldNameRequired");
+		}
+		if (Validator.isNull(dominoFieldNameWithTitle)) {
+			SessionErrors.add(actionRequest, "dominoFieldNameWithTitleRequired");
 		}
 		if (extractTags && Validator.isNull(dominoFieldNameWithTags)) {
 			SessionErrors.add(actionRequest, "dominoFieldNameWithTagsRequired");
@@ -331,6 +339,7 @@ public class DominoDocMigPortlet extends MVCPortlet {
 		String dominoFieldNameWithTags = preferences.getValue("dominoFieldNameWithTags", StringPool.BLANK);
 		String dominoFieldNameWithCategories = preferences.getValue("dominoFieldNameWithCategories", StringPool.BLANK);
 		String dominoFieldNameWithDescr = preferences.getValue("dominoFieldNameWithDescr", StringPool.BLANK);
+		String dominoFieldNameWithTitle = preferences.getValue("dominoFieldNameWithTitle", StringPool.BLANK);
 		String vocabularyName = preferences.getValue("vocabularyName", StringPool.BLANK);
 		boolean extractTags = GetterUtil.getBoolean(preferences.getValue("extractTags", StringPool.BLANK));
 		boolean extractCategories = GetterUtil.getBoolean(preferences.getValue("extractCategories", StringPool.BLANK));
@@ -348,6 +357,7 @@ public class DominoDocMigPortlet extends MVCPortlet {
 		taskContextMap.put("dominoFieldNameWithTags", dominoFieldNameWithTags);
 		taskContextMap.put("dominoFieldNameWithCategories", dominoFieldNameWithCategories);
 		taskContextMap.put("dominoFieldNameWithDescr", dominoFieldNameWithDescr);
+		taskContextMap.put("dominoFieldNameWithTitle", dominoFieldNameWithTitle);
 		taskContextMap.put("vocabularyName", vocabularyName);
 		taskContextMap.put("extractTags", extractTags);
 		taskContextMap.put("extractCategories", extractCategories);
@@ -378,7 +388,7 @@ public class DominoDocMigPortlet extends MVCPortlet {
 			return;
 		}
 
-	        SessionMessages.add(actionRequest, "success");
+	        SessionMessages.add(actionRequest, "successTaskStarted");
 
 	}
 	@Override
