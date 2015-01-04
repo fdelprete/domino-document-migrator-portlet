@@ -3,9 +3,12 @@ package com.fmdp.bulk.domino;
 import lotus.domino.*;
 
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import com.fmdp.domino_migrator.portlet.model.NotesImportBean;
+import com.fmdp.domino_migrator.util.DocsAndMediaUtil;
 import com.fmdp.domino_migrator.util.DominoProxyUtil;
 import com.fmdp.domino_migrator.util.NotesDocumentUtil;
 import com.fmdp.domino_migrator.util.NotesImportDataHandlerStatusMessageSenderUtil;
@@ -18,6 +21,8 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.BackgroundTask;
+import com.liferay.portal.service.ServiceContext;
+import com.liferay.portlet.asset.model.AssetVocabulary;
 
 
 public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
@@ -41,10 +46,21 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 		String dominoViewName = MapUtil.getString(taskContextMap, "dominoViewName");
 		String dominoFieldName = MapUtil.getString(taskContextMap, "dominoFieldName");
 		String dominoFieldNameWithTags = MapUtil.getString(taskContextMap, "dominoFieldNameWithTags");
+		String dominoFieldNameWithCategories = MapUtil.getString(taskContextMap, "dominoFieldNameWithCategories");
+		String dominoFieldNameWithDescr = MapUtil.getString(taskContextMap, "dominoFieldNameWithDescr");
+		String vocabularyName = MapUtil.getString(taskContextMap, "vocabularyName");
 		boolean extractTags = MapUtil.getBoolean(taskContextMap, "extractTags");
+		boolean extractCategories = MapUtil.getBoolean(taskContextMap, "extractCategories");
+		boolean extractDescription = MapUtil.getBoolean(taskContextMap, "extractDescription");
 		long newFolderId = MapUtil.getLong(taskContextMap, "newFolderId");
 		long groupId = MapUtil.getLong(taskContextMap, "groupId");
 		long userId = MapUtil.getLong(taskContextMap, "userId");
+		String localeComp = MapUtil.getString(taskContextMap, "locale");;
+		Locale locale = stringToLocale(localeComp);
+		
+		ServiceContext serviceContext = new ServiceContext();
+		serviceContext.setScopeGroupId(groupId);
+
 		
 		if (Validator.isNull(dominoDatabaseName) ||
 				Validator.isNull(dominoViewName) ||
@@ -81,6 +97,11 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 			return backgroundTaskResult;
 		}
 		
+		AssetVocabulary assetVocabulary = null;
+		if (extractCategories) {
+			assetVocabulary = DocsAndMediaUtil.createVocabulary(userId, groupId, locale, vocabularyName);
+		}
+		
 		int notesDocProcessed = 0;
 		Document doc = view.getFirstDocument();
 		if (doc == null ) {
@@ -91,6 +112,14 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 		}
 		
 		NotesImportBean notesImportBean = new NotesImportBean();
+		notesImportBean.setServerName(server);
+		notesImportBean.setNotesDatabase(dominoDatabaseName);
+		notesImportBean.setNotesView(dominoViewName);
+		notesImportBean.setNotesFieldWithAttachments(dominoFieldName);
+		notesImportBean.setNotesFieldWithTags(dominoFieldNameWithTags);
+		notesImportBean.setNotesFieldWithCategories(dominoFieldNameWithCategories);
+		notesImportBean.setNotesFieldWithDescr(dominoFieldNameWithDescr);
+		notesImportBean.setVocabularyName(vocabularyName);
 		notesImportBean.setDocumentsWithProblem(0);
 		notesImportBean.setTotalDocuments(0);
 		notesImportBean.setTotalAttachments(0);
@@ -109,13 +138,13 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 			notesDocProcessed++;
 			System.out.print("notesDocProcessed " + notesDocProcessed + StringPool.NEW_LINE);
 			
-			notesImportBean.setDocumentsImported(notesDocProcessed);
-			NotesImportDataHandlerStatusMessageSenderUtil.sendStatusMessage(notesImportBean);
 			System.out.print("notesImportBean " + notesImportBean.toString() + StringPool.NEW_LINE);
 			
-			numAttachments += NotesDocumentUtil.ExtractAndSaveAttachment(userId, groupId, newFolderId, 
-					doc, dominoFieldName, 
-					extractTags, dominoFieldNameWithTags);
+			numAttachments += NotesDocumentUtil.ExtractAndSaveAttachment(userId, groupId, locale, doc, taskContextMap, assetVocabulary, serviceContext);
+			
+			notesImportBean.setDocumentsImported(notesDocProcessed);
+			notesImportBean.setTotalAttachments(numAttachments);
+			NotesImportDataHandlerStatusMessageSenderUtil.sendStatusMessage(notesImportBean);
 			
 			Document tmpdoc = doc;
 			doc = view.getNextDocument(doc);
@@ -126,11 +155,12 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 		
 		view.recycle();
 		db.recycle();
-		dominoProxy.closeDominoSession();
-//		BackgroundTaskResult backgroundTaskResult = new BackgroundTaskResult(
-//				BackgroundTaskConstants.STATUS_SUCCESSFUL);
-//		backgroundTaskResult.setStatusMessage("tutto ok");
-		return BackgroundTaskResult.SUCCESS;
+		if (dominoProxy.isDominoSessionAvailable())
+			dominoProxy.closeDominoSession();
+		BackgroundTaskResult backgroundTaskResult = new BackgroundTaskResult(
+				BackgroundTaskConstants.STATUS_SUCCESSFUL);
+		backgroundTaskResult.setStatusMessage(notesImportBean.getNotesImportBeanJSONArray().toString());
+		return backgroundTaskResult;
 	}
 	
 	@Override
@@ -152,5 +182,17 @@ public class NotesAttachmentTaskExecutor extends BaseBackgroundTaskExecutor {
 		exceptionMessagesJSONObject.put("status", errorType);
 		
 		return exceptionMessagesJSONObject.toString();
+	}
+	
+	private Locale stringToLocale(String s)
+	{
+		String l = "";
+		String c = "";
+	    StringTokenizer tempStringTokenizer = new StringTokenizer(s,",");
+	    if(tempStringTokenizer.hasMoreTokens())
+	    	l = (String)tempStringTokenizer.nextElement();
+	    if(tempStringTokenizer.hasMoreTokens())
+	    	c = (String) tempStringTokenizer.nextElement();
+	    return new Locale(l,c);
 	}
 }

@@ -33,13 +33,25 @@
 			"dominoFieldName", StringPool.BLANK);
 	String dominoFieldNameWithTags = portletPreferences.getValue(
 			"dominoFieldNameWithTags", StringPool.BLANK);
+	String dominoFieldNameWithCategories = portletPreferences.getValue(
+			"dominoFieldNameWithCategories", StringPool.BLANK);
 	String dominoDatabaseAcl = portletPreferences.getValue(
 			"dominoDatabaseAcl", StringPool.BLANK);
+	String dominoFieldNameWithDescr = portletPreferences.getValue(
+			"dominoFieldNameWithDescr", StringPool.BLANK);
+	String vocabularyName = portletPreferences.getValue(
+			"vocabularyName", StringPool.BLANK);
+
 	boolean isConfigValid = GetterUtil.getBoolean(portletPreferences
 			.getValue("isConfigValid", StringPool.BLANK));
 	boolean extractTags = GetterUtil.getBoolean(portletPreferences
 			.getValue("extractTags", StringPool.BLANK));
-
+	boolean extractCategories = GetterUtil.getBoolean(portletPreferences
+			.getValue("extractCategories", StringPool.BLANK));
+	
+	boolean extractDescription = GetterUtil.getBoolean(portletPreferences
+			.getValue("extractDescription", StringPool.BLANK));
+	
 	long newFolderId = GetterUtil.getLong(portletPreferences.getValue(
 			"newFolderId", StringPool.BLANK));
 
@@ -147,7 +159,7 @@
 							type="text" value="<%=dominoDatabaseName%>" />
 
 						<aui:input cssClass="lfr-input-text-container"
-							helpMessage="the-view-name-is" label="doimino-view-name"
+							helpMessage="the-view-name-is" label="domino-view-name"
 							name="dominoViewName" type="text" value="<%=dominoViewName%>" />
 
 						<aui:input cssClass="lfr-input-text-container"
@@ -194,16 +206,48 @@
 					</aui:fieldset>
 				</liferay-ui:panel>
 				<liferay-ui:panel collapsible="<%=true%>" extended="<%=true%>"
+					id="domExtractDescription" persistState="<%=true%>"
+					title="description-and-title-extraction">
+					<liferay-ui:error key="dominoFieldNameWithDescrRequired"
+						message="please-enter-the-field-name-containing-the-description-of-the-notes-document" />
+
+					<aui:input label="extract-description" name="extractDescription" type="checkbox"
+						value="<%=extractDescription%>" />
+					<aui:input cssClass="lfr-input-text-container"
+						label="domino-field-with-description" name="dominoFieldNameWithDescr"
+						value="<%=dominoFieldNameWithDescr%>" />
+				</liferay-ui:panel>
+
+				<liferay-ui:panel collapsible="<%=true%>" extended="<%=true%>"
 					id="domExtractCatAndTag" persistState="<%=true%>"
 					title="categories-and-tags-extraction">
 					<liferay-ui:error key="dominoFieldNameWithTagsRequired"
 						message="please-enter-the-field-name-containing-the-tags-for-the-notes-document" />
-
-					<aui:input label="extract-tags" name="extractTags" type="checkbox"
-						value="<%=extractTags%>" />
-					<aui:input cssClass="lfr-input-text-container"
-						label="domino-field-with-tags" name="dominoFieldNameWithTags"
-						value="<%=dominoFieldNameWithTags%>" />
+					<liferay-ui:error key="dominoFieldNameWithCategoriesRequired"
+						message="please-enter-the-field-name-containing-the-categories-for-the-notes-document" />
+					<liferay-ui:error key="vocabularyNameRequired"
+						message="please-enter-the-liferay-vocabulary-name" />
+						
+					<aui:fieldset>
+						<aui:input label="extract-tags" name="extractTags" type="checkbox"
+							value="<%=extractTags%>" />
+						<aui:input cssClass="lfr-input-text-container"
+							helpMessage="the-domino-field-name-with-tags-is"
+							label="domino-field-with-tags" name="dominoFieldNameWithTags"
+							value="<%=dominoFieldNameWithTags%>" />
+					</aui:fieldset>
+					<aui:fieldset>
+						<aui:input label="extract-categories" name="extractCategories" type="checkbox"
+							value="<%=extractCategories%>" />
+						<aui:input cssClass="lfr-input-text-container"
+							label="domino-field-with-categories" 
+							helpMessage="the-domino-field-name-with-categories-is"
+							name="dominoFieldNameWithCategories"
+							value="<%=dominoFieldNameWithCategories%>" />
+						<aui:input cssClass="lfr-input-text-container"
+							label="vocabulary-name" name="vocabularyName"
+							value="<%=vocabularyName%>" />
+					</aui:fieldset>
 				</liferay-ui:panel>
 				<liferay-ui:panel collapsible="<%=true%>" extended="<%=true%>"
 					id="domImportTask" persistState="<%=true%>" title="task-execution">

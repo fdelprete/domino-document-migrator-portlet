@@ -1,12 +1,6 @@
 package com.fmdp.domino_migrator.portlet;
 
-
-
-import lotus.domino.*;
-
 import com.fmdp.domino_migrator.util.DominoProxyUtil;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -57,8 +51,9 @@ public class ConfigurationActionImpl implements ConfigurationAction {
 	        preferences.setValue("dominoUserName", dominoUserName);
 	        preferences.setValue("dominoUserPassword", dominoUserPassword);
 	        preferences.store();
-	
-	        dominoProxy.closeDominoSession();
+	        
+	        if (dominoProxy.isDominoSessionAvailable())
+	        	dominoProxy.closeDominoSession();
 	        
 	        SessionMessages.add(actionRequest, "success");
 	        SessionMessages.add(
@@ -76,5 +71,4 @@ public class ConfigurationActionImpl implements ConfigurationAction {
  
         return "/configuration.jsp";
     }
-	private static Log _log = LogFactoryUtil.getLog(ConfigurationActionImpl.class);
 }
